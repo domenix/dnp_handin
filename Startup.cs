@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VIAMovies.Data;
 using VIAMovies.Services;
+using System.IO;
+using VIAMovies.Models;
 
 namespace VIAMovies
 {
@@ -29,7 +31,7 @@ namespace VIAMovies
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -48,6 +50,18 @@ namespace VIAMovies
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                Directory.CreateDirectory("db");
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                context.Database.Migrate();
+
+                if (Directory.Exists("Migrations"))
+                {
+                    DbInitializer.Initialize(context);
+                }
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
