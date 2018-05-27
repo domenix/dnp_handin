@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace VIAMovies.Pages
 {
-    public class AboutModel : PageModel
+    public class CreateReservationModel : PageModel
     {
         public string Message { get; set; }
 
         public void OnGet()
         {
-            Message = "Your application description page.";
+            Message = "This will return the available movies, hopefully";
         }
     }
 }
