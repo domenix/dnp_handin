@@ -1,6 +1,7 @@
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    padding-right: 10px;
 }
 
 /* Wrapping element */
@@ -20,21 +21,19 @@ body {
 .carousel-inner .item img[src$=".svg"] {
     width: 100%;
 }
+.calendarDividerRow
+{
+    margin-top: 10%;
+}
 
 /* QR code generator */
 #qrCode {
     margin: 15px;
 }
-
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
     .carousel-caption {
         display: none;
     }
-}
-
-#calendar
-{
-    margin-top:20%
 }

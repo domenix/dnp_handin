@@ -5,7 +5,9 @@ $(function() {
   
     $('#calendar').fullCalendar({
       // put your options and callbacks here
-      defaultView: 'basicWeek'
+      defaultView: 'basicWeek',
+      height: 650,
+      firstday: 1
     })
   
   });
