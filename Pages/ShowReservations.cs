@@ -12,7 +12,7 @@ namespace VIAMovies.Pages
 
         public void OnGet()
         {
-            Message = "This will return the available movies, hopefully";
+            Message = "This will return all of your registrations, in theory";
         }
     }
 }
