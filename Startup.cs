@@ -31,7 +31,8 @@ namespace VIAMovies
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole>(options => {
+            services.AddIdentity<User, IdentityRole>(options =>
+            {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
                 options.Password.RequireNonAlphanumeric = false;
@@ -48,13 +49,15 @@ namespace VIAMovies
                     options.Conventions.AuthorizePage("/Account/Logout");
                 });
 
+            services.AddScoped<IDbInitializer, DbInitializer>();
+
             // Register no-op EmailSender used by account confirmation and password reset during development
             // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
             services.AddSingleton<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDbInitializer dbInitializer)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
@@ -64,7 +67,7 @@ namespace VIAMovies
 
                 if (Directory.Exists("Migrations"))
                 {
-                    DbInitializer.Initialize(context);
+                    dbInitializer.Initialize();
                 }
             }
 

@@ -11,7 +11,7 @@ using VIAMovies.Data;
 namespace VIAMovies.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180523204320_InitialMigration")]
+    [Migration("20180528231240_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,9 +132,9 @@ namespace VIAMovies.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("duration");
+                    b.Property<int>("Duration");
 
-                    b.Property<string>("title")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(300);
 
@@ -148,9 +148,9 @@ namespace VIAMovies.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("MovieId");
+                    b.Property<DateTime>("Date");
 
-                    b.Property<DateTime>("date");
+                    b.Property<int?>("MovieId");
 
                     b.HasKey("Id");
 
@@ -164,11 +164,15 @@ namespace VIAMovies.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("ScreeningId");
+
+                    b.Property<string>("Seat");
+
                     b.Property<string>("UserId");
 
-                    b.Property<string>("seat");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ScreeningId");
 
                     b.HasIndex("UserId");
 
@@ -279,8 +283,12 @@ namespace VIAMovies.Migrations
 
             modelBuilder.Entity("VIAMovies.Models.Ticket", b =>
                 {
+                    b.HasOne("VIAMovies.Models.Screening", "Screening")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ScreeningId");
+
                     b.HasOne("VIAMovies.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618

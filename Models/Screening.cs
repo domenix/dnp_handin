@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VIAMovies.Models
@@ -7,8 +8,9 @@ namespace VIAMovies.Models
     {
         public int Id { get; set; }
         [Required]
-        public DateTime date { get; set; }
+        public DateTime Date { get; set; }
 
         public Movie Movie { get; set; }
+        public List<Ticket> Tickets { get; set; }
     }
 }

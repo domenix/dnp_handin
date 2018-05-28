@@ -8,10 +8,9 @@ namespace VIAMovies.Models
         public int Id { get; set; }
         [StringLength(300, MinimumLength = 1)]
         [Required]
-        public string title { get; set; }
+        public string Title { get; set; }
         [Required]
-        public int duration { get; set; }
-
+        public int Duration { get; set; }
         public List<Screening> Screenings { get; set; }
     }
 }
