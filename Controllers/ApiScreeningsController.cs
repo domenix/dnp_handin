@@ -26,10 +26,23 @@ namespace VIAMovies.Controllers
                              {
                                  s.Id,
                                  s.Date,
-                                 Movie = new { s.Movie.Id, s.Movie.Title, s.Movie.Duration }
+                                 Movie = new { s.Movie.Id, s.Movie.Title, s.Movie.Duration },
+                                 Tickets = s.Tickets.Select(t => new { t.Seat })
                              };
 
             return Ok(JsonConvert.SerializeObject(screenings, Formatting.Indented));
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteById(int id)
+        {
+            var result =
+            (from s in _context.Screenings
+             where s.Id == id
+             select new { Screening = s, s.Tickets }).FirstOrDefault();
+            _context.Tickets.RemoveRange(result.Tickets);
+            _context.Screenings.Remove(result.Screening);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
     }
