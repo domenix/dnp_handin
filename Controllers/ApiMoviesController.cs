@@ -11,14 +11,14 @@ using Newtonsoft.Json;
 namespace VIAMovies.Controllers
 {
     [Route("api/[controller]")]
-    public class MovieController : Controller
+    public class MoviesController : Controller
     {
         private readonly VIAMovies.Data.ApplicationDbContext _context;
-        public MovieController(VIAMovies.Data.ApplicationDbContext context)
+        public MoviesController(VIAMovies.Data.ApplicationDbContext context)
         {
             _context = context;
         }
-        [HttpGet("all")]
+        [HttpGet("")]
         public IActionResult Get()
         {
             var movies = _context.Movies.ToList();
