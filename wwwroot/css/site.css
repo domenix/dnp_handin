@@ -28,6 +28,12 @@ a {
 a:hover {
     color: #ffaaaa;
 }
+.btn {
+    color: #9B5E5E;
+}
+.active a{
+    background-color: #9B5E5E !important;
+}
 #calendar {
     
 }
