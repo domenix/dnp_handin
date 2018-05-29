@@ -149,7 +149,7 @@ namespace VIAMovies.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<int?>("MovieId");
+                    b.Property<int>("MovieId");
 
                     b.HasKey("Id");
 
@@ -277,7 +277,8 @@ namespace VIAMovies.Migrations
                 {
                     b.HasOne("VIAMovies.Models.Movie", "Movie")
                         .WithMany("Screenings")
-                        .HasForeignKey("MovieId");
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VIAMovies.Models.Ticket", b =>

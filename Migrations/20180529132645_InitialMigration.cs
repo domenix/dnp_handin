@@ -174,7 +174,7 @@ namespace VIAMovies.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Date = table.Column<DateTime>(nullable: false),
-                    MovieId = table.Column<int>(nullable: true)
+                    MovieId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,7 +184,7 @@ namespace VIAMovies.Migrations
                         column: x => x.MovieId,
                         principalTable: "Movies",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

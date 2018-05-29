@@ -4,6 +4,10 @@
     ViewData["Title"] = "VIA Movies";
 }
 
+<script>
+        var test = @Html.Raw(@Model.getScreenings());
+</script>
+
 <div class="row">
     <div class="col-md-5">
       <h2><a asp-page="CreateReservation">Create a new reservation</a></h2>

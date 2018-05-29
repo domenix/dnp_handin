@@ -11,7 +11,7 @@ using VIAMovies.Data;
 namespace VIAMovies.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180528231240_InitialMigration")]
+    [Migration("20180529132645_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,7 +150,7 @@ namespace VIAMovies.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<int?>("MovieId");
+                    b.Property<int>("MovieId");
 
                     b.HasKey("Id");
 
@@ -278,7 +278,8 @@ namespace VIAMovies.Migrations
                 {
                     b.HasOne("VIAMovies.Models.Movie", "Movie")
                         .WithMany("Screenings")
-                        .HasForeignKey("MovieId");
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VIAMovies.Models.Ticket", b =>

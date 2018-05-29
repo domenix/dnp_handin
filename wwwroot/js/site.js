@@ -16,8 +16,9 @@ $(function() {
       },
       defaultView: 'basicWeek',
       height: 650,
-      firstDay: 1
+      firstDay: 1,
+      events: test
     })
-    $('document').ready(function(){console.log(json2);});
+    $('document').ready(function(){console.log(test);});
     
   });
