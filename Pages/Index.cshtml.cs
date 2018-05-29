@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using VIAMovies.Models;
 
@@ -38,15 +39,13 @@ namespace VIAMovies.Pages
 
         public string getScreenings()
         {
-            List<Screening> screenings = _context.Screenings.ToList();
+            List<Screening> screenings = _context.Screenings.Include(m => m.Movie).ToList();
 
             List<JSScreening> jsscreenings = new List<JSScreening>();
 
             foreach (Screening s in screenings)
             {
-                //s.Movie.Title, s.Movie.Duration, s.Date
-
-                jsscreenings.Add(new JSScreening(s.Id, s.MovieId.ToString(), s.Date.ToString("yyyy-MM-ddTHH':'mm"), s.Date.AddMinutes(150).ToString("yyyy-MM-ddTHH':'mm")));
+                jsscreenings.Add(new JSScreening(s.Id, s.Movie.Title, s.Date.ToString("yyyy-MM-ddTHH':'mm"), s.Date.AddMinutes(150).ToString("yyyy-MM-ddTHH':'mm")));
             }
 
             return JsonConvert.SerializeObject(jsscreenings);
