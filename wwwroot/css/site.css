@@ -22,7 +22,12 @@ body {
 }
 
 /* QR code generator */
-
+a {
+    color: #9B5E5E;
+}
+a:hover {
+    color: #ffaaaa;
+}
 #calendar {
     
 }
