@@ -24,15 +24,15 @@ namespace VIAMovies.Pages
         {
             public int id;
             public string title;
-            public string startdate;
-            public string enddate;
+            public string start;
+            public string end;
 
             public JSScreening(int id, string title, string startdate, string enddate)
             {
                 this.id = id;
                 this.title = title;
-                this.startdate = startdate;
-                this.enddate = enddate;
+                this.start = startdate;
+                this.end = enddate;
             }
         }
 
