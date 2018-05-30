@@ -1,0 +1,89 @@
+@page
+<!-- Clever hack for the vsCode razor formatter -->
+@model IndexModel
+<!-- Clever hack for the vsCode razor formatter -->
+@{ ViewData["Title"] = "Edit Movies"; }
+<!-- Clever hack for the vsCode razor formatter -->
+<div class="row">
+    <div class="col-md-6">
+        <h4>@ViewData["Title"]</h4>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group" id="movies">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Add Movies</h4>
+        <ul class="list-group contrast-text">
+            <li class="list-group-item">
+                Title: <input id="newMovieTitle" type="text" class="form-control" />
+            </li>
+            <li class="list-group-item">
+                Duration (Minutes): <input id="newMovieDuration" type="number" class="form-control" />
+            </li>
+        </ul>
+        <button id="saveButton" type="button" class="btn btn-default btn-lg">Save</button>
+    </div>
+</div>
+
+@section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
+<script>
+    {
+        function buildMovie(id, title, duration) {
+            //god I want React right about now
+            return $("<div/>", {
+                class: "panel panel-default",
+                html: $("<div/>", {
+                    class: "panel-heading",
+                    html: $("<div/>", {
+                        class: "panel-title contrast-text",
+                        text: title
+                    })
+                }).add($("<div/>", {
+                    class: "panel-body contrast-text",
+                    html: $("<div/>", {
+                        style: "display:inline-block",
+                        text: `Duration: ${duration} minutes`
+                    })
+                }).append($("<button/>", {
+                    on: {
+                        async click() {
+                            await deleteMovie(id)
+                            refreshMovies()
+                        }
+                    },
+                    class: "btn btn-default btn-lg",
+                    style: "float:right",
+                    type: "button",
+                    html: $("<span/>", {
+                        class: "glyphicon glyphicon-trash"
+                    })
+                })))
+            });
+        }
+
+
+        const moviesDom = $("#movies");
+        async function refreshMovies() {
+            const movies = await getMovies();
+            moviesDom.empty()
+            for (const {
+                    Id,
+                    Title,
+                    Duration
+                } of movies) {
+                buildMovie(Id, Title, Duration).appendTo(moviesDom);
+            }
+        }
+        const titleDom = $("#newMovieTitle");
+        const durationDom = $("#newMovieDuration");
+        $("#saveButton").click(async function() {
+            await createMovie(titleDom.val(), parseInt(durationDom.val())).catch(err => {
+                //Would be a lot better with a snackbar or something like that but no time so alert will have to do
+                alert(err.message);
+            })
+            refreshMovies();
+        })
+        refreshMovies();
+    }
+</script>
+}

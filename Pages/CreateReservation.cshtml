@@ -4,7 +4,101 @@
     ViewData["Title"] = "Create a reservation";
 }
 
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
-<div id="calendar"></div>
-<p>This is where we'll have the reservations and stuff.</p>
+<h2>Create a reservation</h2>
+<h3>Select movie, time and one of the available seats.</h3>
+<div class="row">
+    <div class="col-md-4">
+        <ul class="list-group contrast-text">
+            <li class="list-group-item">
+                Movie: <select id="newScreeningMovie"></select>
+            </li>
+        </ul>
+        <h4>Available screenings</h4>
+        <div class="form-group" id="screenings">
+        </div>
+        <button id="reserveButton" type="button" class="button">Reserve</button>
+    </div>
+    <div class="col-md-6">
+    <div id="seats"></div>
+
+    </div>
+</div>
+
+@section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
+<script>
+    {
+        var screenings;
+        $("#newScreeningMovie").click(refreshScreenings);
+        function buildScreening(id, title, date, duration, tickets) {
+            //god I want React right about now
+            const startDate = moment(date);
+            const formattedStartDate = startDate.format("Do MMM | h:mm");
+            const endDate = startDate.add(duration, "minutes");
+            const formattedEndDate = endDate.format("h:mm");
+            return $("<div/>", {
+                class: "panel panel-default",
+                html: $("<div/>", {
+                    class: "panel-heading",
+                    html: $("<div/>", {
+                        class: "panel-title contrast-text",
+                        text: formattedStartDate
+                    })
+                })
+            });
+        }
+        const seatsDom = $("#seats");
+        function populateSeats(tickets)
+        {
+            for(var i in tickets)
+            {
+                console.log(tickets[i].Seat);
+            }
+            return true;
+        }
+        const screeningsDom = $("#screenings");
+        async function refreshScreenings() {
+            screenings = await getScreenings();
+            screeningsDom.empty()
+            for (const {
+                    Id,
+                    Date: date,
+                    Tickets: tickets,
+                    Movie: {
+                        Title,
+                        Duration
+                    }
+                } of screenings) {
+                var selected = moviesDom.val() - 1;
+                if(Title==moviesDom[0][selected].innerHTML)
+                {
+                buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
+                //temporarily here, should trigger when clicked on a screening
+                populateSeats(tickets);
+                }
+            }
+        }
+        const moviesDom = $("#newScreeningMovie");
+        async function refreshMovies() {
+            const movies = await getMovies();
+            moviesDom.empty();
+            for (const {
+                    Title,
+                    Id
+                } of movies) {
+                $("<option/>", {
+                    value: Id,
+                    text: Title
+                }).appendTo(moviesDom);
+            }
+        }
+        $("#reserveButton").click(async function() {
+            await createTicket();
+            refreshScreenings();
+        })
+
+        refreshMovies();
+        refreshScreenings();
+        const date = moment().add(1, "hour").toISOString(true);
+    }
+</script>
+}

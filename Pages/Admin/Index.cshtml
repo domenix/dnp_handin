@@ -1,45 +1,114 @@
 @page
+<!-- Clever hack for the vsCode razor formatter -->
 @model IndexModel
-@{
-    ViewData["Title"] = "Profile";
-}
-
-<h4>@ViewData["Title"]</h4>
-@Html.Partial("_StatusMessage", Model.StatusMessage)
+<!-- Clever hack for the vsCode razor formatter -->
+@{ ViewData["Title"] = "Edit Screenings"; }
+<!-- Clever hack for the vsCode razor formatter -->
 <div class="row">
     <div class="col-md-6">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Username"></label>
-                <input asp-for="Username" class="form-control" disabled />
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                @if (true)
-                {
-                    <div class="input-group">
-                        <input asp-for="Input.Email" class="form-control" />
-                        <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-ok text-success"></span></span>
-                    </div>
-                }
-                else
-                {
-                    <input asp-for="Input.Email" class="form-control" />
-                    <button asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
-                }
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Input.PhoneNumber"></label>
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-default">Save</button>
-        </form>
+        <h4>@ViewData["Title"]</h4>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group" id="screenings">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Add Screening</h4>
+        <ul class="list-group contrast-text">
+            <li class="list-group-item">
+                Date: <input id="newScreeningDate" type="datetime-local" class="form-control" />
+            </li>
+            <li class="list-group-item">
+                Movie: <select id="newScreeningMovie"></select>
+            </li>
+        </ul>
+        <button id="saveButton" type="button" class="btn btn-default btn-lg">Save</button>
     </div>
 </div>
 
-@section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+@section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
+<script>
+    {
+        function buildScreening(id, title, date, duration, tickets) {
+            //god I want React right about now
+            const startDate = moment(date);
+            const formattedStartDate = startDate.format("Do/MMM h:mm");
+            const endDate = startDate.add(duration, "minutes");
+            const formattedEndDate = endDate.format("h:mm");
+            return $("<div/>", {
+                class: "panel panel-default",
+                html: $("<div/>", {
+                    class: "panel-heading",
+                    html: $("<div/>", {
+                        class: "panel-title contrast-text",
+                        text: title
+                    })
+                }).add($("<div/>", {
+                    style: "color: black; display: flex;",
+                    class: "panel-body",
+                    text: `${formattedStartDate} - ${formattedEndDate}, duration: ${duration} minutes, Tickets sold: ${tickets}`
+                }).append($("<button/>", {
+                    on: {
+                        async click() {
+                            await deleteScreening(id)
+                            refreshScreenings()
+                        }
+                    },
+                    class: "btn btn-default btn-lg",
+                    type: "button",
+                    html: $("<span/>", {
+                        class: "glyphicon glyphicon-trash"
+                    })
+                })))
+            });
+        }
+
+
+        const screeningsDom = $("#screenings");
+        async function refreshScreenings() {
+            const screenings = await getScreenings();
+            screeningsDom.empty()
+            for (const {
+                    Id,
+                    Date: date,
+                    Tickets: {
+                        length
+                    },
+                    Movie: {
+                        Title,
+                        Duration
+                    }
+                } of screenings) {
+                buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
+            }
+        }
+        const moviesDom = $("#newScreeningMovie");
+        async function refreshMovies() {
+            const movies = await getMovies();
+            moviesDom.empty();
+            for (const {
+                    Title,
+                    Id
+                } of movies) {
+                $("<option/>", {
+                    value: Id,
+                    text: Title
+                }).appendTo(moviesDom);
+            }
+        }
+        const dateDom = $("#newScreeningDate");
+        $("#saveButton").click(async function() {
+            await createScreening(dateDom.val(), parseInt(moviesDom.val())).catch(err => {
+                //Would be a lot better with a snackbar or something like that but no time so alert will have to do
+                alert(err.message);
+            })
+            refreshScreenings();
+            refreshMovies();
+        })
+
+        refreshMovies();
+        refreshScreenings();
+        const date = moment().add(1, "hour").toISOString(true);
+        dateDom.val(date.substr(0, date.length - 13), ) //set date to now + 1h without seconds
+    }
+</script>
 }

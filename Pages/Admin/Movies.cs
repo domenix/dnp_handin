@@ -12,12 +12,12 @@ using VIAMovies.Services;
 
 namespace VIAMovies.Pages.Admin
 {
-    public partial class IndexModel : PageModel
+    public partial class MoviesModel : PageModel
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public IndexModel(
+        public MoviesModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
