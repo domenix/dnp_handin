@@ -2,9 +2,8 @@
 <!-- Clever hack for the vsCode razor formatter -->
 @model IndexModel
 <!-- Clever hack for the vsCode razor formatter -->
-@{ ViewData["Title"] = "Screenings"; }
+@{ ViewData["Title"] = "Edit Screenings"; }
 <!-- Clever hack for the vsCode razor formatter -->
-@Html.Partial("_StatusMessage", Model.StatusMessage)
 <div class="row">
     <div class="col-md-6">
         <h4>@ViewData["Title"]</h4>
@@ -29,36 +28,6 @@
 @section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
 <script>
     {
-        function getScreenings() {
-            return fetch("/api/screenings").then(res => res.json());
-        }
-
-        function getMovies() {
-            return fetch("/api/movies").then(res => res.json());
-        }
-
-        function deleteScreening(id) {
-            return fetch("/api/screenings/" + id, {
-                method: "DELETE"
-            })
-        }
-
-        async function createScreening(date, movieId) {
-            if (!date) {
-                throw new Error("You must enter a date")
-            }
-            if (Date.parse(date) < Date.now()) {
-                throw new Error("Invalid date")
-            }
-            return fetch("/api/screenings/", {
-                method: "POST",
-                body: JSON.stringify({
-                    date,
-                    movieId
-                })
-            })
-        }
-
         function buildScreening(id, title, date, duration, tickets) {
             //god I want React right about now
             const startDate = moment(date);
@@ -74,7 +43,7 @@
                         text: title
                     })
                 }).add($("<div/>", {
-                    style: "color: black; display: flex; ",
+                    style: "color: black; display: flex;",
                     class: "panel-body",
                     text: `${formattedStartDate} - ${formattedEndDate}, duration: ${duration} minutes, Tickets sold: ${tickets}`
                 }).append($("<button/>", {
@@ -139,7 +108,6 @@
         refreshMovies();
         refreshScreenings();
         const date = moment().add(1, "hour").toISOString(true);
-        console.log(date.substr(0, date.length))
         dateDom.val(date.substr(0, date.length - 13), ) //set date to now + 1h without seconds
     }
 </script>

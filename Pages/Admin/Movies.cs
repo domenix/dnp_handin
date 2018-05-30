@@ -16,36 +16,15 @@ namespace VIAMovies.Pages.Admin
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IEmailSender _emailSender;
 
         public MoviesModel(
             UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IEmailSender emailSender)
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _emailSender = emailSender;
         }
 
-        public string Username { get; set; }
-
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
-        }
         public Task<bool> IsAdmin(User user)
         {
             return _userManager.IsInRoleAsync(user, "Admin");
@@ -62,14 +41,6 @@ namespace VIAMovies.Pages.Admin
             {
                 return RedirectToPage("/Index");
             }
-
-            Username = user.UserName;
-
-            Input = new InputModel
-            {
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
-            };
 
             return Page();
         }
