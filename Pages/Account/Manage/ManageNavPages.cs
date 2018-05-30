@@ -12,6 +12,8 @@ namespace VIAMovies.Pages.Account.Manage
 
         public static string ChangePassword => "ChangePassword";
 
+        public static string Tickets => "Tickets";
+
         public static string ExternalLogins => "ExternalLogins";
 
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
@@ -20,10 +22,12 @@ namespace VIAMovies.Pages.Account.Manage
 
         public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 
+        public static string TicketsNavClass(ViewContext viewContext) => PageNavClass(viewContext, Tickets);
+
         public static string ExternalLoginsNavClass(ViewContext viewContext) => PageNavClass(viewContext, ExternalLogins);
 
         public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
-    
+
         public static string PageNavClass(ViewContext viewContext, string page)
         {
             var activePage = viewContext.ViewData["ActivePage"] as string
