@@ -16,13 +16,19 @@
         <h4>Available screenings</h4>
         <div class="form-group" id="screenings">
         </div>
-        <button id="saveButton" type="button" class="btn btn-default btn-lg">Save</button>
+        <button id="reserveButton" type="button" class="button">Reserve</button>
+    </div>
+    <div class="col-md-6">
+    <div id="seats"></div>
+
     </div>
 </div>
 
 @section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
 <script>
     {
+        var screenings;
+        $("#newScreeningMovie").click(refreshScreenings);
         function buildScreening(id, title, date, duration, tickets) {
             //god I want React right about now
             const startDate = moment(date);
@@ -40,24 +46,35 @@
                 })
             });
         }
-
-
+        const seatsDom = $("#seats");
+        function populateSeats(tickets)
+        {
+            for(var i in tickets)
+            {
+                console.log(tickets[i].Seat);
+            }
+            return true;
+        }
         const screeningsDom = $("#screenings");
         async function refreshScreenings() {
-            const screenings = await getScreenings();
+            screenings = await getScreenings();
             screeningsDom.empty()
             for (const {
                     Id,
                     Date: date,
-                    Tickets: {
-                        length
-                    },
+                    Tickets: tickets,
                     Movie: {
                         Title,
                         Duration
                     }
                 } of screenings) {
+                var selected = moviesDom.val() - 1;
+                if(Title==moviesDom[0][selected].innerHTML)
+                {
                 buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
+                //temporarily here, should trigger when clicked on a screening
+                populateSeats(tickets);
+                }
             }
         }
         const moviesDom = $("#newScreeningMovie");
@@ -74,21 +91,14 @@
                 }).appendTo(moviesDom);
             }
         }
-        const dateDom = $("#newScreeningDate");
-        $("#saveButton").click(async function() {
-            await createScreening(dateDom.val(), parseInt(moviesDom.val())).catch(err => {
-                //Would be a lot better with a snackbar or something like that but no time so alert will have to do
-                
-                alert(err.message);
-            })
+        $("#reserveButton").click(async function() {
+            await createTicket();
             refreshScreenings();
-            refreshMovies();
         })
 
         refreshMovies();
         refreshScreenings();
         const date = moment().add(1, "hour").toISOString(true);
-        dateDom.val(date.substr(0, date.length - 13), ) //set date to now + 1h without seconds
     }
 </script>
 }
