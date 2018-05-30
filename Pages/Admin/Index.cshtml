@@ -16,13 +16,13 @@
         <h4>Add Screening</h4>
         <ul class="list-group contrast-text">
             <li class="list-group-item">
-                Date: <input id="newScreeningDate" type="datetime-local" class="form-contral" />
+                Date: <input id="newScreeningDate" type="datetime-local" class="form-control" />
             </li>
             <li class="list-group-item">
                 Movie: <select id="newScreeningMovie"></select>
             </li>
         </ul>
-        <button type="button" class="btn btn-default btn-lg">Save</button>
+        <button id="saveButton" type="button" class="btn btn-default btn-lg">Save</button>
     </div>
 </div>
 
@@ -40,6 +40,22 @@
         function deleteScreening(id) {
             return fetch("/api/screenings/" + id, {
                 method: "DELETE"
+            })
+        }
+
+        async function createScreening(date, movieId) {
+            if (!date) {
+                throw new Error("You must enter a date")
+            }
+            if (Date.parse(date) < Date.now()) {
+                throw new Error("Invalid date")
+            }
+            return fetch("/api/screenings/", {
+                method: "POST",
+                body: JSON.stringify({
+                    date,
+                    movieId
+                })
             })
         }
 
@@ -110,8 +126,21 @@
                 }).appendTo(moviesDom);
             }
         }
-        refreshMovies()
-        refreshScreenings()
+        const dateDom = $("#newScreeningDate");
+        $("#saveButton").click(async function() {
+            await createScreening(dateDom.val(), parseInt(moviesDom.val())).catch(err => {
+                //Would be a lot better with a snackbar or something like that but no time so alert will have to do
+                alert(err.message);
+            })
+            refreshScreenings();
+            refreshMovies();
+        })
+
+        refreshMovies();
+        refreshScreenings();
+        const date = moment().add(1, "hour").toISOString(true);
+        console.log(date.substr(0, date.length))
+        dateDom.val(date.substr(0, date.length - 13), ) //set date to now + 1h without seconds
     }
 </script>
 }

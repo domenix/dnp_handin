@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,6 +33,20 @@ namespace VIAMovies.Controllers
 
             return Ok(JsonConvert.SerializeObject(screenings, Formatting.Indented));
         }
+
+        //Should have authorization :(, no time to implement OpenID connect but imagine we pass an AccessToken in the Authorization header
+        [HttpPost("")]
+        public async Task<IActionResult> Post()
+        {
+            var body = new StreamReader(Request.Body).ReadToEnd();
+            var json = JsonConvert.DeserializeAnonymousType(body, new { date = "", movieId = 1 });
+            var screening = new Screening { Movie = _context.Movies.Single(m => m.Id == json.movieId), Date = DateTime.Parse(json.date) };
+            await _context.Screenings.AddAsync(screening);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        //Should have authorization :(
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteById(int id)
         {
