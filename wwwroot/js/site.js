@@ -83,3 +83,8 @@ async function createMovie(title, duration) {
     })
   });
 }
+
+function buttonClicked()
+{
+  window.open("/CreateReservation");
+}

@@ -4,7 +4,91 @@
     ViewData["Title"] = "Create a reservation";
 }
 
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
-<div id="calendar"></div>
-<p>This is where we'll have the reservations and stuff.</p>
+<h2>Create a reservation</h2>
+<h3>Select movie, time and one of the available seats.</h3>
+<div class="row">
+    <div class="col-md-4">
+        <ul class="list-group contrast-text">
+            <li class="list-group-item">
+                Movie: <select id="newScreeningMovie"></select>
+            </li>
+        </ul>
+        <h4>Available screenings</h4>
+        <div class="form-group" id="screenings">
+        </div>
+        <button id="saveButton" type="button" class="btn btn-default btn-lg">Save</button>
+    </div>
+</div>
+
+@section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
+<script>
+    {
+        function buildScreening(id, title, date, duration, tickets) {
+            //god I want React right about now
+            const startDate = moment(date);
+            const formattedStartDate = startDate.format("Do MMM | h:mm");
+            const endDate = startDate.add(duration, "minutes");
+            const formattedEndDate = endDate.format("h:mm");
+            return $("<div/>", {
+                class: "panel panel-default",
+                html: $("<div/>", {
+                    class: "panel-heading",
+                    html: $("<div/>", {
+                        class: "panel-title contrast-text",
+                        text: formattedStartDate
+                    })
+                })
+            });
+        }
+
+
+        const screeningsDom = $("#screenings");
+        async function refreshScreenings() {
+            const screenings = await getScreenings();
+            screeningsDom.empty()
+            for (const {
+                    Id,
+                    Date: date,
+                    Tickets: {
+                        length
+                    },
+                    Movie: {
+                        Title,
+                        Duration
+                    }
+                } of screenings) {
+                buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
+            }
+        }
+        const moviesDom = $("#newScreeningMovie");
+        async function refreshMovies() {
+            const movies = await getMovies();
+            moviesDom.empty();
+            for (const {
+                    Title,
+                    Id
+                } of movies) {
+                $("<option/>", {
+                    value: Id,
+                    text: Title
+                }).appendTo(moviesDom);
+            }
+        }
+        const dateDom = $("#newScreeningDate");
+        $("#saveButton").click(async function() {
+            await createScreening(dateDom.val(), parseInt(moviesDom.val())).catch(err => {
+                //Would be a lot better with a snackbar or something like that but no time so alert will have to do
+                
+                alert(err.message);
+            })
+            refreshScreenings();
+            refreshMovies();
+        })
+
+        refreshMovies();
+        refreshScreenings();
+        const date = moment().add(1, "hour").toISOString(true);
+        dateDom.val(date.substr(0, date.length - 13), ) //set date to now + 1h without seconds
+    }
+</script>
+}
