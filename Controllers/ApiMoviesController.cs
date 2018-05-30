@@ -45,11 +45,13 @@ namespace VIAMovies.Controllers
             var result =
             (from m in _context.Movies
              where m.Id == id
-             select new { Movie = m, Screenings = m.Screenings }).FirstOrDefault();
-            _context.Tickets.RemoveRange(result.Screenings.SelectMany(s => s.Tickets));
-            _context.Screenings.RemoveRange(result.Screenings);
+             select new { Movie = m, Tickets = m.Screenings.Select(s => s.Tickets) }).FirstOrDefault();
+            var FlattenedTickets = result.Tickets.SelectMany(t => t);
+            _context.Tickets.RemoveRange(FlattenedTickets);
+            await _context.SaveChangesAsync();
             _context.Movies.Remove(result.Movie);
             await _context.SaveChangesAsync();
+
             return Ok();
         }
 
