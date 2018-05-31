@@ -1,8 +1,8 @@
 ﻿@page
+<!-- Clever hack for the vsCode razor formatter -->
 @model CreateReservationModel
-@{
-    ViewData["Title"] = "Create a reservation";
-}
+<!-- Clever hack for the vsCode razor formatter -->
+@{ ViewData["Title"] = "Create a reservation"; }
 
 <h2>Create a reservation</h2>
 
@@ -22,17 +22,12 @@
     <div class="col-md-5 col-md-offset-1">
         <div id="seats">
             <h3 class="hidden-md hidden-lg">Seats</h3>
-            <hr>
-            @{
-                int numberOfSeats = Model.numberOfSeats();
-                char[] letters = Enumerable.Range('A', 26).Select(x => (char) x).ToArray();
-                for(int i = 0; i < numberOfSeats; i++) {
-                    for(int j = 0; j < numberOfSeats; j++) {
-                        <text><div id=@letters[i]@j class="seat">@letters[i]@j</div></text>
-                    }
-                    <text><br></text>
+            <hr> @{ int numberOfSeats = Model.numberOfSeats(); char[] letters = Enumerable.Range('A', 26).Select(x => (char) x).ToArray(); for(int i = 0; i
+            < numberOfSeats; i++) { for(int j=0 ; j < numberOfSeats; j++) { <text>
+                <div id=@letters[i]@j class="seat">@letters[i]@j</div>
+                </text>
                 }
-            }
+                <text><br></text> } }
         </div>
     </div>
 </div>
@@ -42,6 +37,7 @@
     {
         var screenings;
         $("#newScreeningMovie").change(refreshScreenings);
+
         function buildScreening(id, title, date, duration, tickets) {
             //god I want React right about now
             const startDate = moment(date);
@@ -61,12 +57,11 @@
         }
         const seatsDom = $("#seats");
 
-        function populateSeats(tickets)
-        {
-            for(var i = 0; i < tickets.length; i++) {
+        function populateSeats(tickets) {
+            for (var i = 0; i < tickets.length; i++) {
                 $("#" + tickets[i].Seat).css("background-color", "red").css("cursor", "initial").addClass("reserved");
             }
-
+            setSeatListeners();
             return true;
         }
         const screeningsDom = $("#screenings");
@@ -85,7 +80,7 @@
                 } of screenings) {
                 var selected = moviesDom.val() - 1;
 
-                if(Title == moviesDom[0][selected].innerHTML) {
+                if (Title == moviesDom[0][selected].innerHTML) {
                     buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
                     populateSeats(tickets);
                 }
@@ -100,7 +95,7 @@
             // } of screenings) {
             //     moviesFromScreenings.push(Movie);
             // }
-            
+
             // const movies = moviesFromScreenings;
             const movies = await getMovies();
             moviesDom.empty();
@@ -119,7 +114,10 @@
             $(".seat").css("background-color", "darkgreen").css("cursor", "pointer").removeClass("reserved");
         }
 
-        $('#seats').find("div:not(.reserved, .reserved *)").on('click', selectTicket);
+        function setSeatListeners() {
+            $('.seat').off("click")
+            $('.seat:not(.reserved)').click(selectTicket);
+        }
 
         function selectTicket() {
             console.log($(this).attr("class"));
