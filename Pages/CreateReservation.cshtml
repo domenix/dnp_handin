@@ -17,7 +17,7 @@
         <h4>Available screenings</h4>
         <div class="form-group" id="screenings">
         </div>
-        <button id="reserveButton" type="button" class="button">Reserve</button>
+        <button id="reserveButton" type="button" class="button" disabled>Reserve</button>
     </div>
     <div class="col-md-5 col-md-offset-1">
         <div id="seats">
@@ -38,6 +38,7 @@
         let selectedSeat = undefined;
         $("#newScreeningMovie").change(function() {
             selectedSeat = undefined;
+            $("#reserveButton").attr("disabled", true);
             refreshScreenings();
         });
 
@@ -120,6 +121,7 @@
             $("#" + selectedSeat).removeClass("selected");
             selectedSeat = this.id;
             $(this).css("background-color", "orange").addClass("selected");
+            $("#reserveButton").attr("disabled", false);
             refreshScreenings()
             console.log($(this).attr("class"));
         }
