@@ -23,13 +23,13 @@ namespace VIAMovies.Controllers
         public IActionResult Get()
         {
             var tickets = from s in _context.Tickets
-                             select new
-                             {
-                                 s.Id,
-                                 s.UserId,
-                                 s.Seat,
-                                 s.Screening
-                             };
+                          select new
+                          {
+                              s.Id,
+                              s.UserId,
+                              s.Seat,
+                              s.Screening
+                          };
 
             return Ok(JsonConvert.SerializeObject(tickets));
         }
@@ -39,6 +39,14 @@ namespace VIAMovies.Controllers
         {
             var body = new StreamReader(Request.Body).ReadToEnd();
             var json = JsonConvert.DeserializeAnonymousType(body, new { screeningId = 1, userId = "", seat = "" });
+            var result = from t in _context.Tickets
+                         where t.Seat == json.seat && t.Screening.Id == json.screeningId
+                         select t;
+            if (result.Count() > 0)
+            {
+                Response.StatusCode = 400;
+                return Content("Bad seat");
+            }
             var ticket = new Ticket { Screening = _context.Screenings.Single(m => m.Id == json.screeningId), UserId = json.userId, Seat = json.seat };
             await _context.Tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
