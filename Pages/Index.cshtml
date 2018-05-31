@@ -5,7 +5,7 @@
 }
 
 <script>
-        var test = @Html.Raw(@Model.getScreenings());
+        var screeningsList = @Html.Raw(@Model.getScreenings());
 </script>
 <div class="row text-center"><button onclick="buttonClicked()" class="button">Reserve a ticket</button></div>
 <div class="calendarDividerRow">
@@ -21,5 +21,30 @@
     </div>
     <div id="calendar"></div>
 </div>
+@section Scripts {
+<script>
 
-
+$("#calendar").fullCalendar({
+    defaultView: "agendaSevenDay",
+    groupByResource: true,
+    header: {
+      right: "prev,next"
+    },
+    views: {
+      agendaSevenDay: {
+        type: "agenda",
+        duration: { days: 7 }
+      }
+    },
+    groupByResource: true,
+    slotLabelFormat: "HH:mm",
+    events: screeningsList,
+    minTime: "10:00:00",
+    maxTime: "24:00:00",
+    allDaySlot: false,
+    contentHeight: "auto",
+    nowIndicator: true,
+    eventColor: "#9B5E5E"
+  });
+</script>
+}
