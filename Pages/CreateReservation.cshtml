@@ -11,7 +11,7 @@
         <h3>Select movie, time and an available seat.</h3>
         <ul class="list-group contrast-text">
             <li class="list-group-item">
-                Movie: <select id="newScreeningMovie"></select>
+                Select your movie: <select id="newScreeningMovie"></select>
             </li>
         </ul>
         <h4>Available screenings</h4>
@@ -20,7 +20,7 @@
         <button id="reserveButton" type="button" class="button" disabled>Reserve</button>
     </div>
     <div class="col-md-5 col-md-offset-1">
-        <div id="seats">
+        <div id="seats" style="display:none">
             <h3 class="hidden-md hidden-lg">Seats</h3>
             <hr> @{ int numberOfSeats = Model.numberOfSeats(); char[] letters = Enumerable.Range('A', 26).Select(x => (char) x).ToArray(); for(int i = 0; i
             < numberOfSeats; i++) { for(int j=0 ; j < numberOfSeats; j++) { <text>
@@ -66,7 +66,9 @@
         {     
             refreshScreenings();
             currentlyClicked = id;
-            $("#" + id).css("border-color", "red")
+            $("#" + id).css("border-color", "red");
+            var x = document.getElementById("seats");
+            x.style.display = "block";
         }
         function populateSeats(tickets) {
             for (var i = 0; i < tickets.length; i++) {
@@ -103,7 +105,15 @@
                 }
                
                 buildScreening(Id, Title, date, Duration).appendTo(screeningsDom);
-
+                     
+                if(document.getElementById(currentlyClicked)==null)
+                {
+                      var x = document.getElementById("seats");
+                      x.style.display = "none";
+                }
+                if(document.getElementById("divid")!=null){
+                    alert('Div exists')
+                }
                
             })
         }
@@ -111,6 +121,7 @@
         async function refreshMovies() {
             const movies = await getMoviesWithScreenings();
             moviesDom.empty();
+            $('<option value="" disabled selected>Movies currently being screened</option>').appendTo(moviesDom);
             for (const {
                     Title,
                     Id
@@ -136,6 +147,7 @@
             selectedSeat = this.id;
             $(this).css("background-color", "orange").addClass("selected");
             $("#reserveButton").attr("disabled", false);
+            refreshScreenings();
         }
 
         $("#reserveButton").click(async function() {
@@ -144,7 +156,7 @@
             refreshScreenings();
             window.open("/","_self");
         })
-
+        
         refreshMovies();
         refreshScreenings();
         const date = moment().add(1, "hour").toISOString(true);
