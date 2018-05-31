@@ -35,8 +35,11 @@
 @section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial")
 <script>
     {
-        var screenings;
-        $("#newScreeningMovie").change(refreshScreenings);
+        let selectedSeat = undefined;
+        $("#newScreeningMovie").change(function() {
+            selectedSeat = undefined;
+            refreshScreenings();
+        });
 
         function buildScreening(id, title, date, duration) {
             //god I want React right about now
@@ -59,14 +62,16 @@
 
         function populateSeats(tickets) {
             for (var i = 0; i < tickets.length; i++) {
-                $("#" + tickets[i].Seat).css("background-color", "red").css("cursor", "initial").addClass("reserved");
+                $("#" + tickets[i].Seat).css("background-color", "red").addClass("reserved");
             }
+            if (selectedSeat)
+                $("#" + selectedSeat).css("background-color", "orange").addClass("selected");
             setSeatListeners();
             return true;
         }
         const screeningsDom = $("#screenings");
         async function refreshScreenings() {
-            screenings = await getScreenings();
+            const screenings = await getScreenings();
             screeningsDom.empty();
             clearSeats();
             const selected = moviesDom.val();
@@ -89,15 +94,6 @@
         }
         const moviesDom = $("#newScreeningMovie");
         async function refreshMovies() {
-            // const screenings = await getScreenings();
-            // var moviesFromScreenings = [];
-            // for (const {
-            //         Movie
-            // } of screenings) {
-            //     moviesFromScreenings.push(Movie);
-            // }
-
-            // const movies = moviesFromScreenings;
             const movies = await getMoviesWithScreenings();
             moviesDom.empty();
             for (const {
@@ -117,10 +113,14 @@
 
         function setSeatListeners() {
             $('.seat').off("click")
-            $('.seat:not(.reserved)').click(selectTicket);
+            $('.seat:not(.reserved,.selected)').click(selectTicket);
         }
 
         function selectTicket() {
+            $("#" + selectedSeat).removeClass("selected");
+            selectedSeat = this.id;
+            $(this).css("background-color", "orange").addClass("selected");
+            refreshScreenings()
             console.log($(this).attr("class"));
         }
 
