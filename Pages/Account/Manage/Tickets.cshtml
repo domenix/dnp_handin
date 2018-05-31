@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Tickets";
 }
+@{
+    var tickets = Model.getTickets();
+}
 
 <h4>Your reserved tickets</h4>
 <div class="row">
@@ -10,18 +13,20 @@
         <table class="table table-dark">
             <thead>
             <tr>
+                <th scope="col">Id</th>
                 <th scope="col">Date</th>
                 <th scope="col">Title</th>
                 <th scope="col">Seat</th>
             </tr>
             </thead>
             <tbody>
-            @foreach (var item in Model.getTickets())
+            @for (int i = 0; i < tickets.Count; i++)
             {
                 <tr>
-                <td>@item.Screening.Date.ToString("dd-MM-yyyy HH':'mm")</td>
-                <td>@item.Screening.Movie.Title</td>
-                <td>@item.Screening.Tickets[0].Seat</td>
+                <td>@(i+1)</td>
+                <td>@tickets[i].Screening.Date.ToString("dd-MM-yyyy HH':'mm")</td>
+                <td>@tickets[i].Screening.Movie.Title</td>
+                <td>@tickets[i].Seat</td>
                 </tr>
             }
             </tbody>
