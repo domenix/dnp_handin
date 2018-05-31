@@ -99,7 +99,7 @@
         $("#saveButton").click(async function() {
             await createScreening(dateDom.val(), parseInt(moviesDom.val())).catch(err => {
                 //Would be a lot better with a snackbar or something like that but no time so alert will have to do
-                alert(err.message);
+                alert(err.message || "unknown error occurred");
             })
             refreshScreenings();
             refreshMovies();

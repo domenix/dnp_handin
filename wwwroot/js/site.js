@@ -57,6 +57,9 @@ async function createScreening(date, movieId) {
       date,
       movieId
     })
+  }).then(res => {
+    if (res.status === 400) throw new Error("Overlapping date");
+    if (res.status !== 200) throw new Error("Unknown network error");
   });
 }
 
@@ -84,7 +87,6 @@ async function createMovie(title, duration) {
   });
 }
 
-function buttonClicked()
-{
+function buttonClicked() {
   window.open("/CreateReservation");
 }

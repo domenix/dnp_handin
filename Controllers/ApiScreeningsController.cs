@@ -40,7 +40,19 @@ namespace VIAMovies.Controllers
         {
             var body = new StreamReader(Request.Body).ReadToEnd();
             var json = JsonConvert.DeserializeAnonymousType(body, new { date = "", movieId = 1 });
-            var screening = new Screening { Movie = _context.Movies.Single(m => m.Id == json.movieId), Date = DateTime.Parse(json.date) };
+            var startDate = DateTime.Parse(json.date);
+            var movie = _context.Movies.Single(m => m.Id == json.movieId);
+            var endDate = startDate.AddMinutes(movie.Duration);
+            var results = from r in _context.Screenings
+                          where r.Date.CompareTo(endDate) < 0 &&
+                          startDate.CompareTo(r.Date.AddMinutes(r.Movie.Duration)) < 0
+                          select r;
+            if (results.Count() != 0)
+            {
+                Response.StatusCode = 400;
+                return Content("Invalid date");
+            }
+            var screening = new Screening { Movie = movie, Date = startDate };
             await _context.Screenings.AddAsync(screening);
             await _context.SaveChangesAsync();
             return Ok();
