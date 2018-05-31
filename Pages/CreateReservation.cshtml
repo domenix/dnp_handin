@@ -50,6 +50,8 @@
             const formattedEndDate = endDate.format("HH:mm");
             return $("<div/>", {
                 class: "panel panel-default",
+                onClick: "clicked(id)",
+                id: id,
                 html: $("<div/>", {
                     class: "panel-heading",
                     html: $("<div/>", {
@@ -60,7 +62,13 @@
             });
         }
         const seatsDom = $("#seats");
-
+        var currentlyClicked;
+        function clicked(id)
+        {     
+            refreshScreenings();
+            currentlyClicked = id;
+            console.log(id);
+        }
         function populateSeats(tickets) {
             for (var i = 0; i < tickets.length; i++) {
                 $("#" + tickets[i].Seat).css("background-color", "red").addClass("reserved");
@@ -89,8 +97,16 @@
                     Duration
                 }
             }) => {
+                console.log(""+Id + " " + currentlyClicked);
+                if(Id+"" == currentlyClicked)
+                {
+                    console.log(tickets);
+                    populateSeats(tickets);
+                }
+               
                 buildScreening(Id, Title, date, Duration).appendTo(screeningsDom);
-                populateSeats(tickets);
+
+               
             })
         }
         const moviesDom = $("#newScreeningMovie");
