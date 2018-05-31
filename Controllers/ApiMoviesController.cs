@@ -26,6 +26,13 @@ namespace VIAMovies.Controllers
 
             return Ok(JsonConvert.SerializeObject(movies));
         }
+        [HttpGet("withScreenings")]
+        public IActionResult GetMoviesWithScreenings()
+        {
+            var movies = _context.Movies.Where(m => m.Screenings.Count() > 0).ToList();
+
+            return Ok(JsonConvert.SerializeObject(movies));
+        }
         //Should have authorization :(, no time to implement OpenID connect but imagine we pass an AccessToken in the Authorization header
         [HttpPost("")]
         public async Task<IActionResult> Post()

@@ -38,6 +38,10 @@ function getMovies() {
   return fetch("/api/movies").then(res => res.json());
 }
 
+function getMoviesWithScreenings() {
+  return fetch("/api/movies/withScreenings").then(res => res.json());
+}
+
 function deleteScreening(id) {
   return fetch("/api/screenings/" + id, {
     method: "DELETE"

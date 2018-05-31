@@ -38,7 +38,7 @@
         var screenings;
         $("#newScreeningMovie").change(refreshScreenings);
 
-        function buildScreening(id, title, date, duration, tickets) {
+        function buildScreening(id, title, date, duration) {
             //god I want React right about now
             const startDate = moment(date);
             const formattedStartDate = startDate.format("Do MMM | HH:mm");
@@ -69,22 +69,23 @@
             screenings = await getScreenings();
             screeningsDom.empty();
             clearSeats();
-            for (const {
-                    Id,
-                    Date: date,
-                    Tickets: tickets,
-                    Movie: {
-                        Title,
-                        Duration
-                    }
-                } of screenings) {
-                var selected = moviesDom.val() - 1;
-
-                if (Title == moviesDom[0][selected].innerHTML) {
-                    buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
-                    populateSeats(tickets);
+            const selected = moviesDom.val();
+            screenings.filter(({
+                Movie: {
+                    Id
                 }
-            }
+            }) => Id == selected).forEach(({
+                Id,
+                Date: date,
+                Tickets: tickets,
+                Movie: {
+                    Title,
+                    Duration
+                }
+            }) => {
+                buildScreening(Id, Title, date, Duration).appendTo(screeningsDom);
+                populateSeats(tickets);
+            })
         }
         const moviesDom = $("#newScreeningMovie");
         async function refreshMovies() {
@@ -97,7 +98,7 @@
             // }
 
             // const movies = moviesFromScreenings;
-            const movies = await getMovies();
+            const movies = await getMoviesWithScreenings();
             moviesDom.empty();
             for (const {
                     Title,
