@@ -51,5 +51,9 @@ namespace VIAMovies.Pages
         {
             return seats;
         }
+        public String getUserId()
+        {
+            return _userManager.GetUserId(HttpContext.User);
+        }
     }
 }

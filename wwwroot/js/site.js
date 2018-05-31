@@ -66,7 +66,29 @@ async function createScreening(date, movieId) {
     if (res.status !== 200) throw new Error("Unknown network error");
   });
 }
-
+async function createTicket(screeningId, userId, Seat) {
+  if (!userId) {
+    throw new Error("Invalid user");
+  }
+  if (!Seat) {
+    throw new Error("Seat not selected");
+  }
+  if (!screeningId) {
+    throw new Error("Invalid screening");
+  }
+  return fetch("/api/tickets/", {
+    method: "POST",
+    body: JSON.stringify({
+      screeningId,
+      userId,
+      Seat
+    })
+  }).then(res => {
+    if (res.status === 400) throw new Error("Invalid seat selection");
+    if (res.status !== 200) throw new Error("Unknown network error");
+    alert("Ticket reserved succesfully!");
+  });
+}
 function deleteMovie(id) {
   return fetch("/api/movies/" + id, {
     method: "DELETE"
@@ -92,5 +114,5 @@ async function createMovie(title, duration) {
 }
 
 function buttonClicked() {
-  window.open("/CreateReservation");
+  window.open("/CreateReservation","_self")
 }

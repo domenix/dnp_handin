@@ -41,7 +41,6 @@
             $("#reserveButton").attr("disabled", true);
             refreshScreenings();
         });
-
         function buildScreening(id, title, date, duration) {
             //god I want React right about now
             const startDate = moment(date);
@@ -67,7 +66,7 @@
         {     
             refreshScreenings();
             currentlyClicked = id;
-            console.log(id);
+            $("#" + id).css("border-color", "red")
         }
         function populateSeats(tickets) {
             for (var i = 0; i < tickets.length; i++) {
@@ -78,6 +77,7 @@
             setSeatListeners();
             return true;
         }
+        
         const screeningsDom = $("#screenings");
         async function refreshScreenings() {
             const screenings = await getScreenings();
@@ -97,10 +97,8 @@
                     Duration
                 }
             }) => {
-                console.log(""+Id + " " + currentlyClicked);
                 if(Id+"" == currentlyClicked)
                 {
-                    console.log(tickets);
                     populateSeats(tickets);
                 }
                
@@ -138,13 +136,13 @@
             selectedSeat = this.id;
             $(this).css("background-color", "orange").addClass("selected");
             $("#reserveButton").attr("disabled", false);
-            refreshScreenings()
-            console.log($(this).attr("class"));
         }
 
         $("#reserveButton").click(async function() {
-            await createTicket();
+            await createTicket(currentlyClicked, "@Model.getUserId()", selectedSeat);
+            refreshMovies();
             refreshScreenings();
+            window.open("/","_self");
         })
 
         refreshMovies();
