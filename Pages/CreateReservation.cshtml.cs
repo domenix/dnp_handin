@@ -14,9 +14,10 @@ namespace VIAMovies.Pages
 {
     public class CreateReservationModel : PageModel
     {
-      
+
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private int seats = 10;
 
         public CreateReservationModel(
             UserManager<User> userManager,
@@ -44,6 +45,11 @@ namespace VIAMovies.Pages
             }
 
             return Page();
+        }
+
+        public int numberOfSeats()
+        {
+            return seats;
         }
     }
 }

@@ -5,9 +5,10 @@
 }
 
 <h2>Create a reservation</h2>
-<h3>Select movie, time and one of the available seats.</h3>
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-5">
+        <h3>Select movie, time and an available seat.</h3>
         <ul class="list-group contrast-text">
             <li class="list-group-item">
                 Movie: <select id="newScreeningMovie"></select>
@@ -18,9 +19,21 @@
         </div>
         <button id="reserveButton" type="button" class="button">Reserve</button>
     </div>
-    <div class="col-md-6">
-    <div id="seats"></div>
-
+    <div class="col-md-5 col-md-offset-1">
+        <div id="seats">
+            <h3 class="hidden-md hidden-lg">Seats</h3>
+            <hr>
+            @{
+                int numberOfSeats = Model.numberOfSeats();
+                char[] letters = Enumerable.Range('A', 26).Select(x => (char) x).ToArray();
+                for(int i = 0; i < numberOfSeats; i++) {
+                    for(int j = 0; j < numberOfSeats; j++) {
+                        <text><div id=@letters[i]@j class="seat">@letters[i]@j</div></text>
+                    }
+                    <text><br></text>
+                }
+            }
+        </div>
     </div>
 </div>
 
@@ -28,37 +41,39 @@
 <script>
     {
         var screenings;
-        $("#newScreeningMovie").click(refreshScreenings);
+        $("#newScreeningMovie").change(refreshScreenings);
         function buildScreening(id, title, date, duration, tickets) {
             //god I want React right about now
             const startDate = moment(date);
-            const formattedStartDate = startDate.format("Do MMM | h:mm");
+            const formattedStartDate = startDate.format("Do MMM | HH:mm");
             const endDate = startDate.add(duration, "minutes");
-            const formattedEndDate = endDate.format("h:mm");
+            const formattedEndDate = endDate.format("HH:mm");
             return $("<div/>", {
                 class: "panel panel-default",
                 html: $("<div/>", {
                     class: "panel-heading",
                     html: $("<div/>", {
                         class: "panel-title contrast-text",
-                        text: formattedStartDate
+                        text: formattedStartDate + " - " + formattedEndDate
                     })
                 })
             });
         }
         const seatsDom = $("#seats");
+
         function populateSeats(tickets)
         {
-            for(var i in tickets)
-            {
-                console.log(tickets[i].Seat);
+            for(var i = 0; i < tickets.length; i++) {
+                $("#" + tickets[i].Seat).css("background-color", "red").css("cursor", "initial").addClass("reserved");
             }
+
             return true;
         }
         const screeningsDom = $("#screenings");
         async function refreshScreenings() {
             screenings = await getScreenings();
-            screeningsDom.empty()
+            screeningsDom.empty();
+            clearSeats();
             for (const {
                     Id,
                     Date: date,
@@ -69,16 +84,24 @@
                     }
                 } of screenings) {
                 var selected = moviesDom.val() - 1;
-                if(Title==moviesDom[0][selected].innerHTML)
-                {
-                buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
-                //temporarily here, should trigger when clicked on a screening
-                populateSeats(tickets);
+
+                if(Title == moviesDom[0][selected].innerHTML) {
+                    buildScreening(Id, Title, date, Duration, length).appendTo(screeningsDom);
+                    populateSeats(tickets);
                 }
             }
         }
         const moviesDom = $("#newScreeningMovie");
         async function refreshMovies() {
+            // const screenings = await getScreenings();
+            // var moviesFromScreenings = [];
+            // for (const {
+            //         Movie
+            // } of screenings) {
+            //     moviesFromScreenings.push(Movie);
+            // }
+            
+            // const movies = moviesFromScreenings;
             const movies = await getMovies();
             moviesDom.empty();
             for (const {
@@ -91,6 +114,17 @@
                 }).appendTo(moviesDom);
             }
         }
+
+        async function clearSeats() {
+            $(".seat").css("background-color", "darkgreen").css("cursor", "pointer").removeClass("reserved");
+        }
+
+        $('#seats').find("div:not(.reserved, .reserved *)").on('click', selectTicket);
+
+        function selectTicket() {
+            console.log($(this).attr("class"));
+        }
+
         $("#reserveButton").click(async function() {
             await createTicket();
             refreshScreenings();

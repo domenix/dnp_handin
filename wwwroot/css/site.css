@@ -46,6 +46,22 @@ a:hover {
 }
 #calendar {
 }
+
+#seats {
+  width: 100%;
+  text-align: center;
+}
+
+#seats > div {
+  width: 7.9%;
+  font-size: 2dip;
+  color: white;
+  background-color: darkgreen;
+  display: inline-block;
+  margin: 0.2%;
+  cursor: pointer;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
   /* Hide captions */

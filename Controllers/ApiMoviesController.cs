@@ -24,7 +24,7 @@ namespace VIAMovies.Controllers
         {
             var movies = _context.Movies.ToList();
 
-            return Ok(JsonConvert.SerializeObject(movies, Formatting.None));
+            return Ok(JsonConvert.SerializeObject(movies));
         }
         //Should have authorization :(, no time to implement OpenID connect but imagine we pass an AccessToken in the Authorization header
         [HttpPost("")]

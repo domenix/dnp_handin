@@ -31,7 +31,7 @@ namespace VIAMovies.Controllers
                                  s.Screening
                              };
 
-            return Ok(JsonConvert.SerializeObject(tickets, Formatting.Indented));
+            return Ok(JsonConvert.SerializeObject(tickets));
         }
 
         [HttpPost("")]

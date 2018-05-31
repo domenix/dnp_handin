@@ -31,7 +31,7 @@ namespace VIAMovies.Controllers
                                  Tickets = s.Tickets.Select(t => new { t.Seat })
                              };
 
-            return Ok(JsonConvert.SerializeObject(screenings, Formatting.Indented));
+            return Ok(JsonConvert.SerializeObject(screenings));
         }
 
         //Should have authorization :(, no time to implement OpenID connect but imagine we pass an AccessToken in the Authorization header
